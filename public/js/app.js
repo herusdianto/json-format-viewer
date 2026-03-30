@@ -10,6 +10,7 @@ class JSONViewer {
     }
 
     init() {
+        this.restoreLastInput(); // Restore from localStorage if available
         this.bindThemeToggle();
         this.bindTabEvents();
         this.bindInputEvents();
@@ -17,6 +18,15 @@ class JSONViewer {
         this.bindCopyButtons();
         this.bindDownloadButtons();
         this.bindTreeControls();
+    }
+
+    // Restore last input from localStorage
+    restoreLastInput() {
+        const lastInput = localStorage.getItem('jsonInput');
+        if (lastInput) {
+            document.getElementById('json-input').value = lastInput;
+            this.formatJSON();
+        }
     }
 
     // ==================== Theme Toggle ====================
@@ -127,7 +137,15 @@ class JSONViewer {
         // Clear button
         document.getElementById('clear-btn').addEventListener('click', () => this.clearAll());
         // Trigger formatJSON on input change
-        document.getElementById('json-input').addEventListener('input', () => this.formatJSON());
+        document.getElementById('json-input').addEventListener('input', () => {
+            this.formatJSON();
+        });
+    }
+
+    // Save last input to localStorage
+    saveLastInput() {
+        const input = document.getElementById('json-input').value;
+        localStorage.setItem('jsonInput', input);
     }
 
     formatJSON() {
@@ -152,6 +170,8 @@ class JSONViewer {
             this.renderMinifiedView();
 
             this.showStatus('JSON formatted successfully!', 'success');
+
+            this.saveLastInput();
         } catch (e) {
             this.showError(`Invalid JSON: ${e.message}`);
             document.getElementById('output-section').classList.add('hidden');
@@ -194,6 +214,7 @@ class JSONViewer {
         document.getElementById('output-section').classList.add('hidden');
         this.hideError();
         this.jsonData = null;
+        localStorage.removeItem('jsonInput'); // Clear localStorage as well
         this.showStatus('Cleared', 'success');
     }
 
