@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Heru Rusdianto">
+    <title>JSON Format Viewer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+    <div class="topbar">
+        <a href="https://github.com/herusdianto/json-format-viewer" class="github-link" target="_blank" rel="noopener noreferrer" title="GitHub Repository">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.11.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" fill="currentColor"/>
+            </svg>
+        </a>
+        <div class="theme-toggle">
+            <button id="theme-switch" aria-label="Toggle dark/light mode" class="theme-toggle-btn">
+                <span id="theme-icon"></span>
+            </button>
+        </div>
+    </div>
+
+    <header>
+        <h1>JSON Format Viewer</h1>
+        <p>View JSON as Table, Tree, Pretty & Minified</p>
+        <p class="client-side-note"><strong>100% Client-side:</strong> All processing is done in your browser. <u>No data is sent to any server.</u></p>
+    </header>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="section-header">
+                <h2>Input JSON</h2>
+                <div class="input-actions">
+                    <button id="sample-btn" class="btn btn-sm">Sample JSON</button>
+                    <button id="clear-btn" class="btn btn-sm btn-secondary">Clear</button>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-textarea-wrap">
+                    <label for="json-input" class="visually-hidden">JSON Input</label>
+                    <textarea id="json-input" placeholder="Or paste your JSON here..."></textarea>
+                </div>
+                <div class="file-drop-zone" id="json-drop-zone">
+                    <input type="file" id="json-file" accept=".json,application/json">
+                    <div class="drop-content">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="4" y="16" width="16" height="4" rx="2" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <p>Drag & drop JSON file here or click to browse</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message hidden"></div>
+
+        <!-- Output Section -->
+        <div id="output-section" class="output-section hidden">
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tree">Tree View</button>
+                <button class="tab-btn" data-tab="table">Table View</button>
+                <button class="tab-btn" data-tab="pretty">Pretty</button>
+                <button class="tab-btn" data-tab="minified">Minified</button>
+            </div>
+
+            <!-- Tree View Tab -->
+            <div id="tree" class="tab-content active">
+                <div class="tree-controls">
+                    <button id="expand-all" class="btn btn-sm">Expand All</button>
+                    <button id="collapse-all" class="btn btn-sm">Collapse All</button>
+                </div>
+                <div id="tree-view" class="tree-view"></div>
+            </div>
+
+            <!-- Table View Tab -->
+            <div id="table" class="tab-content">
+                <div class="table-info">
+                    <span id="table-info-text"></span>
+                </div>
+                <div id="table-view" class="table-view"></div>
+            </div>
+
+            <!-- Pretty Tab -->
+            <div id="pretty" class="tab-content">
+                <div class="output-actions">
+                    <button class="btn btn-sm copy-btn" data-target="pretty-output">Copy</button>
+                    <button class="btn btn-sm btn-secondary download-btn" data-content="pretty-output" data-filename="formatted.json">Download</button>
+                </div>
+                <pre id="pretty-output" class="json-output"></pre>
+            </div>
+
+            <!-- Minified Tab -->
+            <div id="minified" class="tab-content">
+                <div class="output-actions">
+                    <button class="btn btn-sm copy-btn" data-target="minified-output">Copy</button>
+                    <button class="btn btn-sm btn-secondary download-btn" data-content="minified-output" data-filename="minified.json">Download</button>
+                </div>
+                <pre id="minified-output" class="json-output minified"></pre>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Created by <a href="https://herusdianto.github.io/" target="_blank" rel="noopener noreferrer">Heru Rusdianto</a> with AI Assistance</p>
+        <p class="copyright">
+            © <span id="currentYear"></span> All rights reserved
+        </p>
+    </footer>
+
+    <!-- Status Message -->
+    <div id="status-message" class="status-message hidden"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
